@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TapNovaPay Explorer</title>
+<style>
+body{margin:0;background:#0f172a;color:white;font-family:Arial}
+.header{background:#111827;padding:20px;border-bottom:1px solid #1e293b}
+.header h1{margin:0;color:#38bdf8}
+.container{padding:30px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px}
+.card{background:#1e293b;border-radius:16px;padding:20px}
+.label{color:#94a3b8;margin-bottom:10px}
+.value{font-size:28px;font-weight:bold;word-break:break-all}
+table{width:100%;border-collapse:collapse;margin-top:25px;background:#1e293b;border-radius:12px;overflow:hidden}
+th,td{padding:12px;border-bottom:1px solid #334155;text-align:left}
+th{color:#38bdf8;background:#111827}
+.hash{font-size:12px;color:#cbd5e1;word-break:break-all}
+.footer{margin-top:40px;color:#64748b}
+</style>
+</head>
+<body>
+<div class="header"><h1>TapNovaPay Explorer</h1></div>
+<div class="container">
+<div class="grid">
+<div class="card"><div class="label">Поточний блок</div><div class="value" id="blocks">...</div></div>
+<div class="card"><div class="label">Підключення</div><div class="value" id="connections">...</div></div>
+<div class="card"><div class="label">Складність</div><div class="value" id="difficulty">...</div></div>
+<div class="card"><div class="label">Best Block Hash</div><div class="value" id="besthash" style="font-size:14px">...</div></div>
+</div>
+
+<h2>Останні блоки</h2>
+<table>
+<thead>
+<tr><th>Height</th><th>Hash</th><th>TX</th><th>Size</th><th>Time</th></tr>
+</thead>
+<tbody id="latestBlocks"></tbody>
+</table>
+
+<div class="footer">TapNovaPay Blockchain Explorer</div>
+</div>
+
+<script>
+async function loadExplorer(){
+  const info=await fetch("https://tnpscan.pp.ua/api/info").then(r=>r.json());
+  document.getElementById("blocks").innerText=info.blockchain.blocks;
+  document.getElementById("connections").innerText=info.network.connections;
+  document.getElementById("difficulty").innerText=Number(info.blockchain.difficulty).toFixed(8);
+  document.getElementById("besthash").innerText=info.blockchain.bestblockhash;
+
+  const latest=await fetch("https://tnpscan.pp.ua/api/latest-blocks").then(r=>r.json());
+  document.getElementById("latestBlocks").innerHTML=latest.blocks.map(b=>`
+    <tr>
+      <td>${b.height}</td>
+      <td class="hash">${b.hash}</td>
+      <td>${b.tx}</td>
+      <td>${b.size}</td>
+      <td>${new Date(b.time*1000).toLocaleString()}</td>
+    </tr>
+  `).join("");
+}
+loadExplorer();
+setInterval(loadExplorer,5000);
+</script>
+</body>
+</html>
