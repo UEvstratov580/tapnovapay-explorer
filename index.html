@@ -43,13 +43,13 @@ th{color:#38bdf8;background:#111827}
 
 <script>
 async function loadExplorer(){
-  const info=await fetch("https://tnpscan.pp.ua/api/info").then(r=>r.json());
+  const info=await fetch("https://api.tnpscan.pp.ua/api/info").then(r=>r.json());
   document.getElementById("blocks").innerText=info.blockchain.blocks;
   document.getElementById("connections").innerText=info.network.connections;
   document.getElementById("difficulty").innerText=Number(info.blockchain.difficulty).toFixed(8);
   document.getElementById("besthash").innerText=info.blockchain.bestblockhash;
 
-  const latest=await fetch("https://tnpscan.pp.ua/api/latest-blocks").then(r=>r.json());
+  const latest=await fetch("https://api.tnpscan.pp.ua/api/latest-blocks").then(r=>r.json());
   document.getElementById("latestBlocks").innerHTML=latest.blocks.map(b=>`
     <tr>
       <td>${b.height}</td>
